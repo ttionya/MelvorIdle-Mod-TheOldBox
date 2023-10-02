@@ -1,8 +1,8 @@
 {
   "private": true,
-  "name": "the-old-box",
+  "name": "melvor-idle-modes",
   "version": "1.0.0",
-  "description": "Melvor Idle Mod",
+  "description": "Melvor Idle Mods",
   "keywords": [
     "Melvor Idle",
     "Melvor",
@@ -10,20 +10,20 @@
   ],
   "author": "ttionya",
   "license": "MIT",
-  "homepage": "https://github.com/ttionya/MelvorIdle-Mod-TheOldBox",
+  "homepage": "https://github.com/ttionya/MelvorIdle-Mods",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ttionya/MelvorIdle-Mod-TheOldBox.git"
+    "url": "git+https://github.com/ttionya/MelvorIdle-Mods.git"
   },
   "bugs": {
-    "url": "https://github.com/ttionya/MelvorIdle-Mod-TheOldBox/issues"
+    "url": "https://github.com/ttionya/MelvorIdle-Mods/issues"
   },
   "engines": {
     "node": ">=18.12.0"
   },
   "scripts": {
     "bootstrap": "pnpm install",
-    "lint": "prettier mod --write",
+    "lint": "prettier mods/**/mod --write",
     "preinstall": "npx only-allow pnpm",
     "prepare": "husky install"
   },
