@@ -1,0 +1,5 @@
+{
+  "_version": "0.0.0",
+  "namespace": "ttionya_AvoidDeathCounter",
+  "setup": "setup.mjs"
+}
