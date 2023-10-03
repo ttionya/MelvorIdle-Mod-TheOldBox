@@ -1,14 +1,21 @@
 const MOD_NAME = 'avoidDeathCounter'
 const MOD_DISPLAY_NAME = 'Avoid Death Counter'
-const STORAGE_CONFIG = 'config'
-const STORAGE_RECORD = 'record'
+
+const SETTINGS = {
+  SECTION_GENERAL: 'General',
+  NAME_ENABLE: {
+    type: 'switch',
+    name: 'enable',
+    label: 'Enable',
+    default: true,
+  },
+}
 
 export function setup(ctx) {
   console.log(`Initializing Mod - ${MOD_DISPLAY_NAME}`, ctx)
 
-  let config = {
-    enable: true,
-  }
+  const utils = new UtilsWithContext(ctx, game)
+
   let record = {
     savedCount: 0,
     totalHitCount: 0,
@@ -18,81 +25,85 @@ export function setup(ctx) {
   let $totalHitCount = null
   let $savedPercent = null
 
-  let willDie = false
-
   function updateDisplay() {
     $savedCount?.text(record.savedCount)
     $totalHitCount?.text(record.totalHitCount)
-    $savedPercent?.text(
-      record.totalHitCount > 0 ? ((record.savedCount / record.totalHitCount) * 100).toFixed(4) : 0
-    )
+    $savedPercent?.text(calcPercent(record.savedCount, record.totalHitCount))
   }
 
-  function handleBeforeDamage(amount, source, thieving) {
-    if (!isModEnable(config)) return
+  // setup settings
+  ;(function () {
+    const sectionGeneral = ctx.settings.section(SETTINGS.SECTION_GENERAL)
 
-    // ignore thieving now
-    if (thieving) return
+    sectionGeneral.add({ ...SETTINGS.NAME_ENABLE })
+  })()
 
-    const player = game.combat.player
+  // setup damage hooks
+  ;(function () {
+    let willDie = false
 
-    if (source === 'Burn' && game.combat.enemy.target.modifiers.increasedMaxHPBurnDamage > 1) {
-      amount += Math.floor(
-        player.stats.maxHitpoints * (player.target.modifiers.increasedMaxHPBurnDamage / 100)
-      )
+    function handleBeforeDamage(amount, source, thieving) {
+      if (!utils.isModEnable()) return
+
+      // ignore thieving now
+      if (thieving) return
+
+      const player = game.combat.player
+
+      if (source === 'Burn' && game.combat.enemy.target.modifiers.increasedMaxHPBurnDamage > 1) {
+        amount += Math.floor(
+          player.stats.maxHitpoints * (player.target.modifiers.increasedMaxHPBurnDamage / 100)
+        )
+      }
+
+      // 死亡フラグ
+      if (player.hitpoints <= amount) {
+        willDie = true
+      }
+
+      // increase total hit count
+      record.totalHitCount++
     }
 
-    // TODO debug
-    console.log(player.hitpoints, amount)
+    function handleAfterDamage() {
+      if (!utils.isModEnable()) return
 
-    // 死亡フラグ
-    if (player.hitpoints <= amount) {
-      willDie = true
+      // TODO debug
+      console.log(record, willDie, utils.isPlayerDeath())
+
+      // increase saved count
+      if (willDie && !utils.isPlayerDeath()) {
+        record.savedCount++
+
+        // notify
+        game.notifications.createInfoNotification(
+          MOD_NAME,
+          `Someone save you ${record.savedCount} times`,
+          '',
+          0
+        )
+      }
+
+      willDie = false
+
+      updateDisplay()
+
+      utils.saveRecord(record)
     }
 
-    // increase total hit count
-    record.totalHitCount++
-  }
+    // Because "SEMI Auto Eat" patches the "damage before hooks" when calling the setup function,
+    // and this mod needs to patch "damage before hooks" in order to work correctly,
+    // the patch is not within any lifecycle.
+    ctx.patch(Player, 'damage').before(handleBeforeDamage)
+    ctx.patch(Player, 'damage').after(handleAfterDamage)
+  })()
 
-  function handleAfterDamage() {
-    if (!isModEnable(config)) return
-
-    // TODO debug
-    console.log(record, willDie, game.combat.isActive)
-
-    // increase saved count
-    if (willDie && !isPlayerDeath()) {
-      record.savedCount++
-
-      // notify
-      game.notifications.createInfoNotification(
-        MOD_NAME,
-        `Auto Eat save you ${record.savedCount} times`,
-        '',
-        0
-      )
-    }
-
-    willDie = false
-
-    updateDisplay()
-
-    saveStorage(ctx, STORAGE_RECORD, record)
-  }
-
-  // Because "SEMI Auto Eat" patches the "damage before hooks" when calling the setup function,
-  // and this mod needs to patch "damage before hooks" in order to work correctly,
-  // the patch is not within any lifecycle.
-  ctx.patch(Player, 'damage').before(handleBeforeDamage)
-  ctx.patch(Player, 'damage').after(handleAfterDamage)
-
-  ctx.onCharacterLoaded((ctx) => {
-    loadStorage(ctx, STORAGE_CONFIG, config)
-    loadStorage(ctx, STORAGE_RECORD, record)
+  ctx.onCharacterLoaded(() => {
+    utils.loadRecord(record)
   })
 
   ctx.onInterfaceReady(() => {
-    if (!isModEnable(config)) return
+    if (!utils.isModEnable()) return
 
     $('#combat-container #combat-fight-container-player .block-content.pt-0:first .block:first')
       .after(`
@@ -100,18 +111,16 @@ export function setup(ctx) {
   <div class="row no-gutters">
     <div class="col-12">
       <span class="font-w400 text-warning text-center m-1 mb-2">
-        <small>
-          <span>You have avoided death <span class="adc-saved-count"></span> times</span>
-        </small>
+        <small>You have avoided death <span class="adc-saved-count"></span> times.</small>
       </span>
     </div>
     <div class="col-12">
       <span class="font-w400 text-warning text-center m-1 mb-2">
         <small>
-          <span>
-            <span class="adc-saved-count"></span>/<span class="adc-hit-count"></span>,
-            <span class="adc-saved-percent"></span>%
-          </span>
+          (
+          <span class="adc-saved-count"></span>/<span class="adc-hit-count"></span>,
+          <span class="adc-saved-percent"></span>
+          )
         </small>
       </span>
     </div>
@@ -126,18 +135,35 @@ export function setup(ctx) {
   })
 }
 
-function loadStorage(ctx, name, data) {
-  Object.assign(data, ctx.characterStorage.getItem(name))
+class UtilsWithContext {
+  STORAGE_RECORD = 'record'
+
+  constructor(ctx, game) {
+    this.context = ctx
+    this.game = game
+  }
+
+  isModEnable() {
+    return (
+      this.context.settings
+        .section(SETTINGS.SECTION_GENERAL)
+        .get(SETTINGS.NAME_ENABLE.name, SETTINGS.NAME_ENABLE.default) === true
+    )
+  }
+
+  isPlayerDeath() {
+    return this.game.combat.player.hitpoints <= 0
+  }
+
+  loadRecord(data) {
+    Object.assign(data, this.context.characterStorage.getItem(this.STORAGE_RECORD))
+  }
+
+  saveRecord(data) {
+    this.context.characterStorage.setItem(this.STORAGE_RECORD, data)
+  }
 }
 
-function saveStorage(ctx, name, data) {
-  ctx.characterStorage.setItem(name, data)
-}
-
-function isModEnable(config) {
-  return config.enable
-}
-
-function isPlayerDeath() {
-  return game.combat.player.hitpoints <= 0
+function calcPercent(numerator, denominator, decimal = 4) {
+  return (numerator || denominator ? '0' : ((numerator / denominator) * 100).toFixed(decimal)) + '%'
 }
