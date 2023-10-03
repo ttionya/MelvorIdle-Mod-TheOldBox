@@ -165,5 +165,5 @@ class UtilsWithContext {
 }
 
 function calcPercent(numerator, denominator, decimal = 4) {
-  return (numerator || denominator ? '0' : ((numerator / denominator) * 100).toFixed(decimal)) + '%'
+  return (numerator && denominator ? ((numerator / denominator) * 100).toFixed(decimal) : '0') + '%'
 }
