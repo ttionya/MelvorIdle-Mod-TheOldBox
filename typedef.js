@@ -2,25 +2,25 @@
 
 /**
  * define CombatManager
- * @typedef {Object} CombatManager
+ * @typedef {object} CombatManager
  * @property {Player} player
  */
 
 /**
  * define mod context
- * @typedef {Object} Context
+ * @typedef {object} Context
  */
 
 /**
  * define DropTable
- * @typedef {Object} DropTable
+ * @typedef {object} DropTable
  * @property {DropTableDrop[]} drops
  * @property {number} totalWeight - total weight
  */
 
 /**
  * define inner DropTableDrop
- * @typedef {Object} DropTableDrop
+ * @typedef {object} DropTableDrop
  * @property {Item} item
  * @property {number} maxQuantity
  * @property {number} minQuantity
@@ -29,7 +29,7 @@
 
 /**
  * define global game
- * @typedef {Object} Game
+ * @typedef {object} Game
  * @property {CombatManager} combat
  * @property {ItemRegistry} items
  * @property {NamespaceRegistry} skills
@@ -38,38 +38,38 @@
 
 /**
  * define Item
- * @typedef {Object} Item
+ * @typedef {object} Item
  * @property {string} id
  */
 
 /**
  * define ItemRegistry
- * @typedef {Object} ItemRegistry
+ * @typedef {object} ItemRegistry
  * @property {Map<string, *>} registeredObjects
  */
 
 /**
  * define NamespaceRegistry
- * @typedef {Object} NamespaceRegistry
+ * @typedef {object} NamespaceRegistry
  * @property {Map<string, *>} registeredObjects
  */
 
 /**
  * define OpenableItem
- * @typedef {Object} OpenableItem
+ * @typedef {object} OpenableItem
  * @augments Item
  * @property {DropTable} dropTable
  */
 
 /**
  * define Player
- * @typedef {Object} Player
+ * @typedef {object} Player
  * @property {number} hitpoints - current HP
  */
 
 /**
  * define Township
- * @typedef {Object} Township
+ * @typedef {object} Township
  * @property {NamespaceRegistry} resources
  * @property {TownshipFnGetResourceItemConversionsFromTownship} getResourceItemConversionsFromTownship
  */
@@ -101,5 +101,5 @@
  * @typedef TownshipResource
  */
 
-/** @type Game */
+/** @type {Game} */
 var game = game

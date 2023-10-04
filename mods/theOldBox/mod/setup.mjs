@@ -27,7 +27,7 @@ function resetConversionRequirements() {
    * @returns {TownshipItemConversion[]} - conversion list
    */
   function getConversionList(id) {
-    /** @type TownshipResource */
+    /** @type {TownshipResource} */
     const resource = game.township.resources.registeredObjects.get(id)
     const conversionList = game.township.getResourceItemConversionsFromTownship(resource)
 
@@ -180,7 +180,7 @@ function resetDropTable() {
 
   /**
    * define DropData
-   * @typedef {Object} DropData
+   * @typedef {object} DropData
    * @property {string} id
    * @property {number} weight
    * @property {number} quantity
@@ -192,7 +192,7 @@ function resetDropTable() {
    * @param {DropData[]} dropData - drop table data
    */
   function setDropTable(id, dropData) {
-    /** @type OpenableItem */
+    /** @type {OpenableItem} */
     const openableItem = itemObjs.get(id)
 
     if (!openableItem) throw Error(`Not found item '${id}'`)
