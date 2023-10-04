@@ -8,6 +8,11 @@ export function setup({ onCharacterLoaded }) {
 }
 
 function resetConversionRequirements() {
+  /**
+   * @param {string} id - item id
+   * @param {TownshipItemConversion[]} conversionList - conversion list
+   * @param {TownshipItemConversionUnlockRequirement[]} requirementsData - unlock requirements data
+   */
   function setRequirements(id, conversionList, requirementsData) {
     const conversionItem = conversionList.find((item) => item.item.id === id)
 
@@ -17,16 +22,24 @@ function resetConversionRequirements() {
     requirementsData.forEach((data) => conversionItem.unlockRequirements.push(data))
   }
 
+  /**
+   * @param {string} id - item id
+   * @returns {TownshipItemConversion[]} - conversion list
+   */
   function getConversionList(id) {
-    const conversionList = game.township.getResourceItemConversionsFromTownship(
-      game.township.resources.registeredObjects.get(id)
-    )
+    /** @type TownshipResource */
+    const resource = game.township.resources.registeredObjects.get(id)
+    const conversionList = game.township.getResourceItemConversionsFromTownship(resource)
 
     if (!conversionList) throw Error(`Not found conversions '${id}'`)
 
     return conversionList
   }
 
+  /**
+   * @param {string} id - skill id
+   * @returns {*} - skill
+   */
   function getSkill(id) {
     const skill = game.skills.registeredObjects.get(id)
 
@@ -165,7 +178,21 @@ function resetConversionRequirements() {
 function resetDropTable() {
   const itemObjs = game.items.registeredObjects
 
+  /**
+   * define DropData
+   * @typedef {Object} DropData
+   * @property {string} id
+   * @property {number} weight
+   * @property {number} quantity
+   * @property {number} [minQuantity]
+   */
+
+  /**
+   * @param {string} id - item id
+   * @param {DropData[]} dropData - drop table data
+   */
   function setDropTable(id, dropData) {
+    /** @type OpenableItem */
     const openableItem = itemObjs.get(id)
 
     if (!openableItem) throw Error(`Not found item '${id}'`)
@@ -188,219 +215,273 @@ function resetDropTable() {
     })
   }
 
-  // Food Box I
+  /**
+   * Food Box I
+   * @type {DropData[]}
+   */
   // prettier-ignore
   const foodBoxIData = [
-    { name: 'Plain_Pizza_Slice', id: 'melvorD:Plain_Pizza_Slice', quantity: 20, weight: 160 },
-    { name: 'Beef', id: 'melvorD:Beef', quantity: 15, weight: 109 },
-    { name: 'Shrimp', id: 'melvorD:Shrimp', quantity: 50, weight: 94 },
-    { name: 'Bread', id: 'melvorD:Bread', quantity: 30, weight: 73 },
-    { name: 'Chicken', id: 'melvorD:Chicken', quantity: 20, weight: 70 },
-    { name: 'Basic_Soup', id: 'melvorD:Basic_Soup', quantity: 40, weight: 46 },
-    { name: 'Salmon', id: 'melvorD:Salmon', quantity: 80, weight: 9 },
-    { name: 'Lobster', id: 'melvorD:Lobster', quantity: 80, weight: 6 },
-    { name: 'Swordfish', id: 'melvorD:Swordfish', quantity: 80, weight: 5 },
-    { name: 'Crab', id: 'melvorD:Crab', quantity: 150, weight: 2 },
+    { id: 'melvorD:Plain_Pizza_Slice', quantity: 20, weight: 160 },
+    { id: 'melvorD:Beef', quantity: 15, weight: 109 },
+    { id: 'melvorD:Shrimp', quantity: 50, weight: 94 },
+    { id: 'melvorD:Bread', quantity: 30, weight: 73 },
+    { id: 'melvorD:Chicken', quantity: 20, weight: 70 },
+    { id: 'melvorD:Basic_Soup', quantity: 40, weight: 46 },
+    { id: 'melvorD:Salmon', quantity: 80, weight: 9 },
+    { id: 'melvorD:Lobster', quantity: 80, weight: 6 },
+    { id: 'melvorD:Swordfish', quantity: 80, weight: 5 },
+    { id: 'melvorD:Crab', quantity: 150, weight: 2 },
   ]
   setDropTable('melvorF:Food_Box_I', foodBoxIData)
 
-  // Food Box II
+  /**
+   * Food Box II
+   * @type {DropData[]}
+   */
   // prettier-ignore
   const foodBoxIIData = [
-    { name: 'Meat_Pizza_Slice', id: 'melvorD:Meat_Pizza_Slice', quantity: 8, weight: 176 },
-    { name: 'Hearty_Soup', id: 'melvorD:Hearty_Soup', quantity: 10, weight: 56 },
-    { name: 'Cherry_Cupcake', id: 'melvorD:Cherry_Cupcake', quantity: 5, weight: 37 },
-    { name: 'Strawberry_Cupcake', id: 'melvorD:Strawberry_Cupcake', quantity: 5, weight: 14 },
-    { name: 'Shark', id: 'melvorD:Shark', quantity: 60, weight: 2 },
-    { name: 'Cave_Fish', id: 'melvorD:Cave_Fish', quantity: 60, weight: 2 },
-    { name: 'Manta_Ray', id: 'melvorD:Manta_Ray', quantity: 60, weight: 1 },
-    { name: 'Whale', id: 'melvorD:Whale', quantity: 60, weight: 1 },
+    { id: 'melvorD:Meat_Pizza_Slice', quantity: 8, weight: 176 },
+    { id: 'melvorD:Hearty_Soup', quantity: 10, weight: 56 },
+    { id: 'melvorD:Cherry_Cupcake', quantity: 5, weight: 37 },
+    { id: 'melvorD:Strawberry_Cupcake', quantity: 5, weight: 14 },
+    { id: 'melvorD:Shark', quantity: 60, weight: 2 },
+    { id: 'melvorD:Cave_Fish', quantity: 60, weight: 2 },
+    { id: 'melvorD:Manta_Ray', quantity: 60, weight: 1 },
+    { id: 'melvorD:Whale', quantity: 60, weight: 1 },
   ]
   setDropTable('melvorF:Food_Box_II', foodBoxIIData)
 
-  // Food Box III
+  /**
+   * Food Box III
+   * @type {DropData[]}
+   */
   // prettier-ignore
   const foodBoxIIIData = [
-    { name: 'Mushroom_Soup', id: 'melvorTotH:Mushroom_Soup', quantity: 8, weight: 20 },
-    { name: 'Banana_Bread', id: 'melvorTotH:Banana_Bread', quantity: 10, weight: 20 },
-    { name: 'Sandwich', id: 'melvorTotH:Sandwich', quantity: 5, weight: 11 },
-    { name: 'Lava_Fish', id: 'melvorTotH:Lava_Fish', quantity: 2, weight: 11 },
-    { name: 'Chicken_Cream_Mushroom_Soup', id: 'melvorTotH:Chicken_Cream_Mushroom_Soup', quantity: 5, weight: 11 },
-    { name: 'Frost_Crab', id: 'melvorTotH:Frost_Crab', quantity: 2, weight: 11 },
-    { name: 'Blue_Crab', id: 'melvorTotH:Blue_Crab', quantity: 2, weight: 10 },
-    { name: 'Terrorfish', id: 'melvorTotH:Terrorfish', quantity: 2, weight: 6 },
-    { name: 'Static_Jellyfish', id: 'melvorTotH:Static_Jellyfish', quantity: 2, weight: 5 },
-    { name: 'Mystic_Shark', id: 'melvorTotH:Mystic_Shark', quantity: 10, weight: 2 },
+    { id: 'melvorTotH:Mushroom_Soup', quantity: 8, weight: 20 },
+    { id: 'melvorTotH:Banana_Bread', quantity: 10, weight: 20 },
+    { id: 'melvorTotH:Sandwich', quantity: 5, weight: 11 },
+    { id: 'melvorTotH:Lava_Fish', quantity: 2, weight: 11 },
+    { id: 'melvorTotH:Chicken_Cream_Mushroom_Soup', quantity: 5, weight: 11 },
+    { id: 'melvorTotH:Frost_Crab', quantity: 2, weight: 11 },
+    { id: 'melvorTotH:Blue_Crab', quantity: 2, weight: 10 },
+    { id: 'melvorTotH:Terrorfish', quantity: 2, weight: 6 },
+    { id: 'melvorTotH:Static_Jellyfish', quantity: 2, weight: 5 },
+    { id: 'melvorTotH:Mystic_Shark', quantity: 10, weight: 2 },
   ]
   setDropTable('melvorTotH:Food_Box_III', foodBoxIIIData)
 
-  // Wood Box I
+  /**
+   * Wood Box I
+   * @type {DropData[]}
+   */
   // prettier-ignore
   const woodBoxIData = [
-    { name: 'Normal_Logs', id: 'melvorD:Normal_Logs', quantity: 80, weight: 108 },
-    { name: 'Oak_Logs', id: 'melvorD:Oak_Logs', quantity: 80, weight: 41 },
-    { name: 'Willow_Logs', id: 'melvorD:Willow_Logs', quantity: 80, weight: 27 },
-    { name: 'Teak_Logs', id: 'melvorD:Teak_Logs', quantity: 80, weight: 13 },
+    { id: 'melvorD:Normal_Logs', quantity: 80, weight: 108 },
+    { id: 'melvorD:Oak_Logs', quantity: 80, weight: 41 },
+    { id: 'melvorD:Willow_Logs', quantity: 80, weight: 27 },
+    { id: 'melvorD:Teak_Logs', quantity: 80, weight: 13 },
   ]
   setDropTable('melvorF:Wood_Box_I', woodBoxIData)
 
-  // Wood Box II
+  /**
+   * Wood Box II
+   * @type {DropData[]}
+   */
   // prettier-ignore
   const woodBoxIIData = [
-    { name: 'Redwood_Logs', id: 'melvorD:Redwood_Logs', quantity: 18, weight: 37 },
-    { name: 'Mahogany_Logs', id: 'melvorD:Mahogany_Logs', quantity: 18, weight: 24 },
-    { name: 'Yew_Logs', id: 'melvorD:Yew_Logs', quantity: 18, weight: 19 },
-    { name: 'Magic_Logs', id: 'melvorD:Magic_Logs', quantity: 18, weight: 7 },
+    { id: 'melvorD:Redwood_Logs', quantity: 18, weight: 37 },
+    { id: 'melvorD:Mahogany_Logs', quantity: 18, weight: 24 },
+    { id: 'melvorD:Yew_Logs', quantity: 18, weight: 19 },
+    { id: 'melvorD:Magic_Logs', quantity: 18, weight: 7 },
   ]
   setDropTable('melvorF:Wood_Box_II', woodBoxIIData)
 
-  // Wood Box III
+  /**
+   * Wood Box III
+   * @type {DropData[]}
+   */
   // prettier-ignore
   const woodBoxIIIData = [
-    { name: 'Grove_Logs', id: 'melvorTotH:Grove_Logs', quantity: 5, weight: 14 },
-    { name: 'Spruce_Logs', id: 'melvorTotH:Spruce_Logs', quantity: 5, weight: 12 },
-    { name: 'Elderwood_Logs', id: 'melvorTotH:Elderwood_Logs', quantity: 5, weight: 11 },
-    { name: 'Revenant_Logs', id: 'melvorTotH:Revenant_Logs', quantity: 5, weight: 6 },
-    { name: 'Carrion_Logs', id: 'melvorTotH:Carrion_Logs', quantity: 5, weight: 4 },
+    { id: 'melvorTotH:Grove_Logs', quantity: 5, weight: 14 },
+    { id: 'melvorTotH:Spruce_Logs', quantity: 5, weight: 12 },
+    { id: 'melvorTotH:Elderwood_Logs', quantity: 5, weight: 11 },
+    { id: 'melvorTotH:Revenant_Logs', quantity: 5, weight: 6 },
+    { id: 'melvorTotH:Carrion_Logs', quantity: 5, weight: 4 },
   ]
   setDropTable('melvorTotH:Wood_Box_III', woodBoxIIIData)
 
-  // Ore Box I
+  /**
+   * Ore Box I
+   * @type {DropData[]}
+   */
   // prettier-ignore
   const oreBoxIData = [
-    { name: 'Copper_Ore', id: 'melvorD:Copper_Ore', quantity: 150, weight: 49 },
-    { name: 'Tin_Ore', id: 'melvorD:Tin_Ore', quantity: 150, weight: 49 },
-    { name: 'Iron_Ore', id: 'melvorD:Iron_Ore', quantity: 150, weight: 28 },
-    { name: 'Silver_Ore', id: 'melvorD:Silver_Ore', quantity: 150, weight: 11 },
+    { id: 'melvorD:Copper_Ore', quantity: 150, weight: 49 },
+    { id: 'melvorD:Tin_Ore', quantity: 150, weight: 49 },
+    { id: 'melvorD:Iron_Ore', quantity: 150, weight: 28 },
+    { id: 'melvorD:Silver_Ore', quantity: 150, weight: 11 },
   ]
   setDropTable('melvorF:Ore_Box_I', oreBoxIData)
 
-  // Ore Box II
+  /**
+   * Ore Box II
+   * @type {DropData[]}
+   */
   // prettier-ignore
   const oreBoxIIData = [
-    { name: 'Gold_Ore', id: 'melvorD:Gold_Ore', quantity: 35, weight: 23 },
-    { name: 'Mithril_Ore', id: 'melvorD:Mithril_Ore', quantity: 35, weight: 14 },
-    { name: 'Adamantite_Ore', id: 'melvorD:Adamantite_Ore', quantity: 35, weight: 12 },
-    { name: 'Runite_Ore', id: 'melvorD:Runite_Ore', quantity: 35, weight: 11 },
-    { name: 'Dragonite_Ore', id: 'melvorD:Dragonite_Ore', quantity: 35, weight: 9 },
+    { id: 'melvorD:Gold_Ore', quantity: 35, weight: 23 },
+    { id: 'melvorD:Mithril_Ore', quantity: 35, weight: 14 },
+    { id: 'melvorD:Adamantite_Ore', quantity: 35, weight: 12 },
+    { id: 'melvorD:Runite_Ore', quantity: 35, weight: 11 },
+    { id: 'melvorD:Dragonite_Ore', quantity: 35, weight: 9 },
   ]
   setDropTable('melvorF:Ore_Box_II', oreBoxIIData)
 
-  // Ore Box III
+  /**
+   * Ore Box III
+   * @type {DropData[]}
+   */
   // prettier-ignore
   const oreBoxIIIData = [
-    { name: 'Corundumite_Ore', id: 'melvorTotH:Corundumite_Ore', quantity: 15, weight: 13 },
-    { name: 'Iridium_Ore', id: 'melvorTotH:Iridium_Ore', quantity: 15, weight: 11 },
-    { name: 'Palladium_Ore', id: 'melvorTotH:Palladium_Ore', quantity: 15, weight: 9 },
-    { name: 'Augite_Ore', id: 'melvorTotH:Augite_Ore', quantity: 15, weight: 8 },
-    { name: 'Divinite_Ore', id: 'melvorTotH:Divinite_Ore', quantity: 15, weight: 6 },
+    { id: 'melvorTotH:Corundumite_Ore', quantity: 15, weight: 13 },
+    { id: 'melvorTotH:Iridium_Ore', quantity: 15, weight: 11 },
+    { id: 'melvorTotH:Palladium_Ore', quantity: 15, weight: 9 },
+    { id: 'melvorTotH:Augite_Ore', quantity: 15, weight: 8 },
+    { id: 'melvorTotH:Divinite_Ore', quantity: 15, weight: 6 },
   ]
   setDropTable('melvorTotH:Ore_Box_III', oreBoxIIIData)
 
-  // Bar Box I
+  /**
+   * Bar Box I
+   * @type {DropData[]}
+   */
   // prettier-ignore
   const barBoxIData = [
-    { name: 'Bronze_Bar', id: 'melvorD:Bronze_Bar', quantity: 100, weight: 32 },
-    { name: 'Iron_Bar', id: 'melvorD:Iron_Bar', quantity: 100, weight: 21 },
-    { name: 'Steel_Bar', id: 'melvorD:Steel_Bar', quantity: 100, weight: 12 },
-    { name: 'Silver_Bar', id: 'melvorD:Silver_Bar', quantity: 100, weight: 9 },
+    { id: 'melvorD:Bronze_Bar', quantity: 100, weight: 32 },
+    { id: 'melvorD:Iron_Bar', quantity: 100, weight: 21 },
+    { id: 'melvorD:Steel_Bar', quantity: 100, weight: 12 },
+    { id: 'melvorD:Silver_Bar', quantity: 100, weight: 9 },
   ]
   setDropTable('melvorF:Bar_Box_I', barBoxIData)
 
-  // Bar Box II
+  /**
+   * Bar Box II
+   * @type {DropData[]}
+   */
   // prettier-ignore
   const barBoxIIData = [
-    { name: 'Mithril_Bar', id: 'melvorD:Mithril_Bar', quantity: 45, weight: 9 },
-    { name: 'Gold_Bar', id: 'melvorD:Gold_Bar', quantity: 45, weight: 8 },
-    { name: 'Adamantite_Bar', id: 'melvorD:Adamantite_Bar', quantity: 45, weight: 7 },
-    { name: 'Runite_Bar', id: 'melvorD:Runite_Bar', quantity: 45, weight: 6 },
-    { name: 'Dragonite_Bar', id: 'melvorD:Dragonite_Bar', quantity: 45, weight: 3 },
+    { id: 'melvorD:Mithril_Bar', quantity: 45, weight: 9 },
+    { id: 'melvorD:Gold_Bar', quantity: 45, weight: 8 },
+    { id: 'melvorD:Adamantite_Bar', quantity: 45, weight: 7 },
+    { id: 'melvorD:Runite_Bar', quantity: 45, weight: 6 },
+    { id: 'melvorD:Dragonite_Bar', quantity: 45, weight: 3 },
   ]
   setDropTable('melvorF:Bar_Box_II', barBoxIIData)
 
-  // Bar Box III
+  /**
+   * Bar Box III
+   * @type {DropData[]}
+   */
   // prettier-ignore
   const barBoxIIIData = [
-    { name: 'Corundumite_Bar', id: 'melvorTotH:Corundumite_Bar', quantity: 20, weight: 5 },
-    { name: 'Augite_Bar', id: 'melvorTotH:Augite_Bar', quantity: 20, weight: 5 },
-    { name: 'Palladium_Bar', id: 'melvorTotH:Palladium_Bar', quantity: 20, weight: 4 },
-    { name: 'Iridium_Bar', id: 'melvorTotH:Iridium_Bar', quantity: 20, weight: 4 },
-    { name: 'Divinite_Bar', id: 'melvorTotH:Divinite_Bar', quantity: 20, weight: 3 },
+    { id: 'melvorTotH:Corundumite_Bar', quantity: 20, weight: 5 },
+    { id: 'melvorTotH:Augite_Bar', quantity: 20, weight: 5 },
+    { id: 'melvorTotH:Palladium_Bar', quantity: 20, weight: 4 },
+    { id: 'melvorTotH:Iridium_Bar', quantity: 20, weight: 4 },
+    { id: 'melvorTotH:Divinite_Bar', quantity: 20, weight: 3 },
   ]
   setDropTable('melvorTotH:Bar_Box_III', barBoxIIIData)
 
-  // Herb Box I
+  /**
+   * Herb Box I
+   * @type {DropData[]}
+   */
   // prettier-ignore
   const herbBoxIData = [
-    { name: 'Garum_Herb', id: 'melvorD:Garum_Herb', quantity: 800, weight: 27 },
-    { name: 'Sourweed_Herb', id: 'melvorD:Sourweed_Herb', quantity: 800, weight: 7 },
-    { name: 'Mantalyme_Herb', id: 'melvorD:Mantalyme_Herb', quantity: 800, weight: 4 },
-    { name: 'Lemontyle_Herb', id: 'melvorD:Lemontyle_Herb', quantity: 800, weight: 3 },
+    { id: 'melvorD:Garum_Herb', quantity: 800, weight: 27 },
+    { id: 'melvorD:Sourweed_Herb', quantity: 800, weight: 7 },
+    { id: 'melvorD:Mantalyme_Herb', quantity: 800, weight: 4 },
+    { id: 'melvorD:Lemontyle_Herb', quantity: 800, weight: 3 },
   ]
   setDropTable('melvorF:Herb_Box_I', herbBoxIData)
 
-  // Herb Box II
+  /**
+   * Herb Box II
+   * @type {DropData[]}
+   */
   // prettier-ignore
   const herbBoxIIData = [
-    { name: 'Oxilyme_Herb', id: 'melvorD:Oxilyme_Herb', quantity: 150, weight: 5 },
-    { name: 'Poraxx_Herb', id: 'melvorF:Poraxx_Herb', quantity: 150, weight: 4 },
-    { name: 'Pigtayle_Herb', id: 'melvorF:Pigtayle_Herb', quantity: 150, weight: 3 },
-    { name: 'Barrentoe_Herb', id: 'melvorF:Barrentoe_Herb', quantity: 150, weight: 2 },
+    { id: 'melvorD:Oxilyme_Herb', quantity: 150, weight: 5 },
+    { id: 'melvorF:Poraxx_Herb', quantity: 150, weight: 4 },
+    { id: 'melvorF:Pigtayle_Herb', quantity: 150, weight: 3 },
+    { id: 'melvorF:Barrentoe_Herb', quantity: 150, weight: 2 },
   ]
   setDropTable('melvorF:Herb_Box_II', herbBoxIIData)
 
-  // Herb Box III
+  /**
+   * Herb Box III
+   * @type {DropData[]}
+   */
   // prettier-ignore
   const herbBoxIIIData = [
-    { name: 'Snowcress_Herb', id: 'melvorTotH:Snowcress_Herb', quantity: 75, weight: 3 },
-    { name: 'Moonwort_Herb', id: 'melvorTotH:Moonwort_Herb', quantity: 75, weight: 2 },
-    { name: 'Bitterlyme_Herb', id: 'melvorTotH:Bitterlyme_Herb', quantity: 75, weight: 2 },
-    { name: 'Wurmtayle_Herb', id: 'melvorTotH:Wurmtayle_Herb', quantity: 75, weight: 1 },
+    { id: 'melvorTotH:Snowcress_Herb', quantity: 75, weight: 3 },
+    { id: 'melvorTotH:Moonwort_Herb', quantity: 75, weight: 2 },
+    { id: 'melvorTotH:Bitterlyme_Herb', quantity: 75, weight: 2 },
+    { id: 'melvorTotH:Wurmtayle_Herb', quantity: 75, weight: 1 },
   ]
   setDropTable('melvorTotH:Herb_Box_III', herbBoxIIIData)
 
-  // Potion Box I
+  /**
+   * Potion Box I
+   * @type {DropData[]}
+   */
   // prettier-ignore
   const potionBoxIData = [
-    { name: 'Bird_Nest_Potion_I', id: 'melvorF:Bird_Nest_Potion_I', quantity: 1350, weight: 200 },
-    { name: 'Melee_Accuracy_Potion_I', id: 'melvorF:Melee_Accuracy_Potion_I', quantity: 1350, weight: 132 },
-    { name: 'Ranged_Assistance_Potion_I', id: 'melvorF:Ranged_Assistance_Potion_I', quantity: 1350, weight: 68 },
-    { name: 'Magic_Assistance_Potion_I', id: 'melvorF:Magic_Assistance_Potion_I', quantity: 1350, weight: 26 },
-    { name: 'Controlled_Heat_Potion_I', id: 'melvorF:Controlled_Heat_Potion_I', quantity: 1350, weight: 22 },
-    { name: 'Famished_Potion_I', id: 'melvorF:Famished_Potion_I', quantity: 1350, weight: 21 },
-    { name: 'Fishermans_Potion_I', id: 'melvorF:Fishermans_Potion_I', quantity: 1350, weight: 17 },
-    { name: 'Generous_Cook_Potion_I', id: 'melvorF:Generous_Cook_Potion_I', quantity: 1350, weight: 17 },
-    { name: 'Fletching_Potion_I', id: 'melvorF:Fletching_Potion_I', quantity: 1350, weight: 16 },
+    { id: 'melvorF:Bird_Nest_Potion_I', quantity: 1350, weight: 200 },
+    { id: 'melvorF:Melee_Accuracy_Potion_I', quantity: 1350, weight: 132 },
+    { id: 'melvorF:Ranged_Assistance_Potion_I', quantity: 1350, weight: 68 },
+    { id: 'melvorF:Magic_Assistance_Potion_I', quantity: 1350, weight: 26 },
+    { id: 'melvorF:Controlled_Heat_Potion_I', quantity: 1350, weight: 22 },
+    { id: 'melvorF:Famished_Potion_I', quantity: 1350, weight: 21 },
+    { id: 'melvorF:Fishermans_Potion_I', quantity: 1350, weight: 17 },
+    { id: 'melvorF:Generous_Cook_Potion_I', quantity: 1350, weight: 17 },
+    { id: 'melvorF:Fletching_Potion_I', quantity: 1350, weight: 16 },
   ]
   setDropTable('melvorF:Potion_Box_I', potionBoxIData)
 
-  // Potion Box II
+  /**
+   * Potion Box II
+   * @type {DropData[]}
+   */
   // prettier-ignore
   const potionBoxIIData = [
-    { name: 'Secret_Stardust_Potion_I', id: 'melvorF:Secret_Stardust_Potion_I', quantity: 422, weight: 38 },
-    { name: 'Gentle_Hands_Potion_I', id: 'melvorF:Gentle_Hands_Potion_I', quantity: 422, weight: 35 },
-    { name: 'Ranged_Strength_Potion_I', id: 'melvorF:Ranged_Strength_Potion_I', quantity: 422, weight: 22 },
-    { name: 'Melee_Strength_Potion_I', id: 'melvorF:Melee_Strength_Potion_I', quantity: 422, weight: 21 },
-    { name: 'Magic_Damage_Potion_I', id: 'melvorF:Magic_Damage_Potion_I', quantity: 422, weight: 20 },
-    { name: 'Elemental_Potion_I', id: 'melvorF:Elemental_Potion_I', quantity: 422, weight: 20 },
-    { name: 'Necromancer_Potion_I', id: 'melvorF:Necromancer_Potion_I', quantity: 422, weight: 15 },
-    { name: 'Herblore_Potion_I', id: 'melvorF:Herblore_Potion_I', quantity: 422, weight: 10 },
-    { name: 'Damage_Reduction_Potion_I', id: 'melvorF:Damage_Reduction_Potion_I', quantity: 422, weight: 7 },
-    { name: 'Diamond_Luck_Potion_I', id: 'melvorF:Diamond_Luck_Potion_I', quantity: 422, weight: 4 },
+    { id: 'melvorF:Secret_Stardust_Potion_I', quantity: 422, weight: 38 },
+    { id: 'melvorF:Gentle_Hands_Potion_I', quantity: 422, weight: 35 },
+    { id: 'melvorF:Ranged_Strength_Potion_I', quantity: 422, weight: 22 },
+    { id: 'melvorF:Melee_Strength_Potion_I', quantity: 422, weight: 21 },
+    { id: 'melvorF:Magic_Damage_Potion_I', quantity: 422, weight: 20 },
+    { id: 'melvorF:Elemental_Potion_I', quantity: 422, weight: 20 },
+    { id: 'melvorF:Necromancer_Potion_I', quantity: 422, weight: 15 },
+    { id: 'melvorF:Herblore_Potion_I', quantity: 422, weight: 10 },
+    { id: 'melvorF:Damage_Reduction_Potion_I', quantity: 422, weight: 7 },
+    { id: 'melvorF:Diamond_Luck_Potion_I', quantity: 422, weight: 4 },
   ]
   setDropTable('melvorF:Potion_Box_II', potionBoxIIData)
 
-  // Potion Box III
+  /**
+   * Potion Box III
+   * @type {DropData[]}
+   */
   // prettier-ignore
   const potionBoxIIIData = [
-    { name: 'Traps_Potion_I', id: 'melvorTotH:Traps_Potion_I', quantity: 422, weight: 38 },
-    { name: 'Gem_Detector_Potion_I', id: 'melvorTotH:Gem_Detector_Potion_I', quantity: 422, weight: 35 },
-    { name: 'Area_Control_Potion_I', id: 'melvorTotH:Area_Control_Potion_I', minQuantity: 253, quantity: 422, weight: 22 },
-    { name: 'Slayer_Bounty_Potion_I', id: 'melvorTotH:Slayer_Bounty_Potion_I', quantity: 422, weight: 21 },
-    { name: 'Holy_Bulwark_Potion_I', id: 'melvorTotH:Holy_Bulwark_Potion_I', quantity: 422, weight: 20 },
-    { name: 'Enkindled_Yields_Potion_I', id: 'melvorTotH:Enkindled_Yields_Potion_I', quantity: 422, weight: 15 },
-    { name: 'Alchemic_Practice_Potion_I', id: 'melvorTotH:Alchemic_Practice_Potion_I', quantity: 422, weight: 7 },
-    { name: 'Penetration_Potion_I', id: 'melvorTotH:Penetration_Potion_I', quantity: 422, weight: 4 },
+    { id: 'melvorTotH:Traps_Potion_I', quantity: 422, weight: 38 },
+    { id: 'melvorTotH:Gem_Detector_Potion_I', quantity: 422, weight: 35 },
+    { id: 'melvorTotH:Area_Control_Potion_I', minQuantity: 253, quantity: 422, weight: 22 },
+    { id: 'melvorTotH:Slayer_Bounty_Potion_I', quantity: 422, weight: 21 },
+    { id: 'melvorTotH:Holy_Bulwark_Potion_I', quantity: 422, weight: 20 },
+    { id: 'melvorTotH:Enkindled_Yields_Potion_I', quantity: 422, weight: 15 },
+    { id: 'melvorTotH:Alchemic_Practice_Potion_I', quantity: 422, weight: 7 },
+    { id: 'melvorTotH:Penetration_Potion_I', quantity: 422, weight: 4 },
   ]
   setDropTable('melvorTotH:Potion_Box_III', potionBoxIIIData)
 }
