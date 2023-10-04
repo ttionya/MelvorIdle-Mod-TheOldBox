@@ -28,7 +28,10 @@
     "prepare": "husky install"
   },
   "devDependencies": {
+    "@ttionya/eslint-config": "^2.5.0",
     "@ttionya/prettier-config": "^1.2.0",
+    "eslint": "^8.50.0",
+    "eslint-plugin-jsdoc": "^46.8.2",
     "husky": "^8.0.3",
     "lint-staged": "^14.0.1"
   }
